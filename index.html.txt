@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>¡Cumpleaños Angela!</title>
+  <style>
+    /* Estilos globales */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #ffe4ec; /* rosa suave */
+      overflow: hidden;
+      text-align: center;
+      color: #333;
+    }
+    .hidden { display: none; }
+
+    /* Contenedor centrado */
+    .stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 400px;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 6px;
+      background-color: #ff69b4;
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover { opacity: 0.9; }
+
+    /* Texto principal grande */
+    .big-text {
+      font-size: 2em;
+      margin-bottom: 0.5em;
+    }
+
+    /* Animación de globos */
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      width: 60px;
+      height: 80px;
+      border-radius: 0 0 30px 30px;
+      opacity: 0.8;
+      animation: rise 6s ease-in infinite;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0)    scale(1); }
+      50%  { opacity: 1; }
+      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+    }
+
+    /* Animación de torta */
+    .cake {
+      font-size: 5em;
+      animation: cake-rise 3s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes cake-rise {
+      to { transform: translateY(-30px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Etapa 1: saludo inicial -->
+  <div id="stage1" class="stage">
+    <div class="big-text">Hola, Angela 🎉</div>
+    <button onclick="nextStage(2)">Toca aquí</button>
+  </div>
+
+  <!-- Etapa 2: Feliz cumpleaños + globos + frase -->
+  <div id="stage2" class="stage hidden">
+    <div class="big-text">¡Feliz cumpleaños, Angela! 🥳</div>
+    <!-- globos generados por JS -->
+    <div id="phrase" style="margin-top: 2em; font-style: italic;">
+      “Que tu día esté lleno de magia y alegría.”  
+    </div>
+    <button onclick="nextStage(3)">Ver la torta</button>
+  </div>
+
+  <!-- Etapa 3: Torta + sopla vela -->
+  <div id="stage3" class="stage hidden">
+    <div id="cake" class="cake">🎂</div>
+    <div id="blow-text" style="margin-top: 1em; font-size: 1.2em;">
+      Sople la vela, Angela
+    </div>
+    <button onclick="nextStage(4)">Soplar vela</button>
+  </div>
+
+  <!-- Incluimos canvas-confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+  <script>
+    // Estado actual
+    let stage = 1;
+
+    // Pasa a la siguiente etapa
+    function nextStage(to) {
+      document.getElementById(`stage${stage}`).classList.add('hidden');
+      stage = to;
+      document.getElementById(`stage${stage}`).classList.remove('hidden');
+
+      if (stage === 2) {
+        launchBalloons();
+      }
+      if (stage === 4) {
+        celebrate();
+      }
+    }
+
+    // Genera globos aleatorios
+    function launchBalloons() {
+      const colors = ['#ff6b6b','#feca57','#48dbfb','#1dd1a1','#5f27cd'];
+      for (let i = 0; i < 15; i++) {
+        const b = document.createElement('div');
+        b.className = 'balloon';
+        const size = 40 + Math.random()*40;
+        b.style.width = `${size}px`;
+        b.style.height = `${size*1.2}px`;
+        b.style.background = colors[Math.floor(Math.random()*colors.length)];
+        b.style.left = `${Math.random()*100}%`;
+        b.style.animationDuration = `${4 + Math.random()*4}s`;
+        document.body.appendChild(b);
+        // que desaparezcan al terminar
+        b.addEventListener('animationend', () => b.remove());
+      }
+    }
+
+    // Confeti y sonido
+    function celebrate() {
+      // confetti
+      confetti({
+        particleCount: 200,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      // sonido
+      const audio = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_7ec2a2e036.mp3?filename=party-horn-1-112639.mp3');
+      audio.play();
+    }
+  </script>
+</body>
+</html>
